@@ -21,8 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class ViewWindow extends JFrame
-{
+public class ViewWindow extends JFrame {
 	private JPanel controls;
 	private Canvas canvas;
 	private PriorityQueue myPQ;
@@ -34,9 +33,9 @@ public class ViewWindow extends JFrame
 	private JTextField textField;
 	private JTextField textField_1;
 	private JLabel lblVarIsEmpty;
+	private JButton btnAddLast;
 
-	public ViewWindow(PriorityQueue pq)
-	{
+	public ViewWindow(PriorityQueue pq) {
 		myPQ = pq;
 
 		setBackground(Color.WHITE);
@@ -53,8 +52,7 @@ public class ViewWindow extends JFrame
 
 	}
 
-	private void initContentPane()
-	{
+	private void initContentPane() {
 		canvas = new Canvas();
 		canvas.setSize(700, 800);
 
@@ -71,10 +69,8 @@ public class ViewWindow extends JFrame
 		controls.setLayout(null);
 
 		JButton btnLoadFromFile = new JButton("Load from file20");
-		btnLoadFromFile.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent arg0)
-			{
+		btnLoadFromFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				addFromFile();
 				drawQueue();
 			}
@@ -84,16 +80,12 @@ public class ViewWindow extends JFrame
 		controls.add(btnLoadFromFile);
 
 		JButton btnRemoveFromList = new JButton("Remove from queue");
-		btnRemoveFromList.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent arg0)
-			{
-				try
-				{
+		btnRemoveFromList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
 					myPQ.remove();
 					drawQueue();
-				} catch (Exception e)
-				{
+				} catch (Exception e) {
 					Error err = new Error(e.getMessage());
 				}
 			}
@@ -106,6 +98,18 @@ public class ViewWindow extends JFrame
 		lblNewLabel.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		lblNewLabel.setBounds(75, 179, 19, 19);
 		controls.add(lblNewLabel);
+		
+		btnAddLast = new JButton("Add Last Added Item: None");
+		btnAddLast.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				myPQ.add(new Item(lastId, lastInv));
+				drawQueue();
+			}
+		});
+		btnAddLast.setFont(new Font("Arial Black", Font.PLAIN, 11));
+		btnAddLast.setBounds(50, 289, 200, 46);
+		controls.add(btnAddLast);
+		btnAddLast.setEnabled(false);
 
 		JLabel lblInventory = new JLabel("Inventory:");
 		lblInventory.setFont(new Font("Arial Black", Font.PLAIN, 13));
@@ -119,14 +123,38 @@ public class ViewWindow extends JFrame
 
 		textField_1 = new JTextField();
 		textField_1.setBounds(130, 219, 120, 20);
+		textField_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if (!textField.getText().equals("") && !textField_1.getText().equals("")
+							&& validNum(textField.getText()) && validNum(textField_1.getText())) {
+						myPQ.add(new Item(Integer.parseInt(textField.getText()),
+								Integer.parseInt(textField_1.getText())));
+						drawQueue();
+						lastId = Integer.parseInt(textField.getText());
+						lastInv = Integer.parseInt(textField_1.getText());
+						btnAddLast.setText(
+								"<html>Add Last-Added Item: <br>" + "[" + lastId + ", " + lastInv + "] </html>");
+						btnAddLast.setEnabled(true);
+						textField.setText("");
+						textField_1.setText("");
+						textField.requestFocus();
+					} else {
+						Error err = new Error("Invalid numerical ID and Inventory.");
+						textField.setText("");
+						textField_1.setText("");
+					}
+				} catch (NumberFormatException e) {
+					Error err = new Error("ID or Inv value entered is too large.");
+				}
+			}
+		});
 		controls.add(textField_1);
 		textField_1.setColumns(10);
 
 		JButton btnClearQueue = new JButton("CLEAR QUEUE");
-		btnClearQueue.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent arg0)
-			{
+		btnClearQueue.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				myPQ = new PriorityQueue();
 				drawQueue();
 			}
@@ -137,46 +165,31 @@ public class ViewWindow extends JFrame
 		btnClearQueue.setBounds(75, 725, 150, 40);
 		controls.add(btnClearQueue);
 
-		JButton btnAddLast = new JButton("Add Last Added Item: None");
-		btnAddLast.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				myPQ.add(new Item(lastId, lastInv));
-				drawQueue();
-			}
-		});
-		btnAddLast.setFont(new Font("Arial Black", Font.PLAIN, 11));
-		btnAddLast.setBounds(50, 289, 200, 46);
-		controls.add(btnAddLast);
-		btnAddLast.setEnabled(false);
+		
 
 		JButton btnAddItem = new JButton("Add Item");
-		btnAddItem.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent arg0)
-			{
-				try
-				{
-				if (!textField.getText().equals("") && !textField_1.getText().equals("")
-						&& validNum(textField.getText()) && validNum(textField_1.getText()))
-				{
-					myPQ.add(new Item(Integer.parseInt(textField.getText()), Integer.parseInt(textField_1.getText())));
-					drawQueue();
-					lastId = Integer.parseInt(textField.getText());
-					lastInv = Integer.parseInt(textField_1.getText());
-					btnAddLast.setText("<html>Add Last-Added Item: <br>" + "[" + lastId + ", " + lastInv + "] </html>");
-					btnAddLast.setEnabled(true);
-					textField.setText("");
-					textField_1.setText("");
-				} else
-				{
-					Error err = new Error("Invalid numerical ID and Inventory.");
-					textField.setText("");
-					textField_1.setText("");
-				}
-				}catch(NumberFormatException e)
-				{
+		btnAddItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if (!textField.getText().equals("") && !textField_1.getText().equals("")
+							&& validNum(textField.getText()) && validNum(textField_1.getText())) {
+						myPQ.add(new Item(Integer.parseInt(textField.getText()),
+								Integer.parseInt(textField_1.getText())));
+						drawQueue();
+						lastId = Integer.parseInt(textField.getText());
+						lastInv = Integer.parseInt(textField_1.getText());
+						btnAddLast.setText(
+								"<html>Add Last-Added Item: <br>" + "[" + lastId + ", " + lastInv + "] </html>");
+						btnAddLast.setEnabled(true);
+						textField.setText("");
+						textField_1.setText("");
+						textField.requestFocus();
+					} else {
+						Error err = new Error("Invalid numerical ID and Inventory.");
+						textField.setText("");
+						textField_1.setText("");
+					}
+				} catch (NumberFormatException e) {
 					Error err = new Error("ID or Inv value entered is too large.");
 				}
 			}
@@ -197,26 +210,24 @@ public class ViewWindow extends JFrame
 		btnWriteToFile.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		btnWriteToFile.setBounds(70, 649, 160, 65);
 		controls.add(btnWriteToFile);
-		
+
 		JLabel lblTextIsEmpty = new JLabel("isEmpty?: ");
 		lblTextIsEmpty.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		lblTextIsEmpty.setBounds(50, 391, 83, 30);
 		controls.add(lblTextIsEmpty);
-		
+
 		lblVarIsEmpty = new JLabel("FALSE");
 		lblVarIsEmpty.setFont(new Font("Arial Black", Font.PLAIN, 13));
 		lblVarIsEmpty.setText(myPQ.isEmpty() + "");
 		lblVarIsEmpty.setBounds(143, 391, 70, 30);
 		controls.add(lblVarIsEmpty);
-		
+
 		JButton btnPeek = new JButton("Peek the queue");
 		btnPeek.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try
-				{
+				try {
 					Notification err = new Notification("Peek returns: " + myPQ.peek());
-				}catch(Exception ex)
-				{
+				} catch (Exception ex) {
 					Error er = new Error("The PriorityQueue is empty.");
 				}
 			}
@@ -228,51 +239,43 @@ public class ViewWindow extends JFrame
 		getContentPane().setLayout(null);
 	}
 
-	private void addFromFile()
-	{
+	private void addFromFile() {
 		int id, inv;
 		Scanner inFile;
 		inFile = new Scanner(ViewWindow.class.getResourceAsStream("/data/file20.txt"));
-		
-		while (inFile.hasNext())
-		{
+
+		while (inFile.hasNext()) {
 			id = inFile.nextInt();
-			
+
 			inv = inFile.nextInt();
 			myPQ.add(new Item(id, inv));
 		}
 		inFile.close();
 
-	
 		lblVarIsEmpty.setText(myPQ.isEmpty() + "");
 	}
 
-	private void writeAndClear()
-	{
+	private void writeAndClear() {
 		int size = myPQ.size();
-		try
-		{
+		try {
 			File output = new File(System.getProperty("user.home") + "/Desktop", "output.txt");
 			FileWriter fw = new FileWriter(output);
 			PrintWriter pw = new PrintWriter(fw);
-			
-			for (int i = 1; i < size; i++)
-			{
-				Item item = (Item)myPQ.remove();
+
+			for (int i = 1; i < size; i++) {
+				Item item = (Item) myPQ.remove();
 				pw.println(item.getId() + ", " + item.getInv());
 			}
 
 			pw.close();
 			Notification notify = new Notification("Output written to desktop.");
 			drawQueue();
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void drawQueue()
-	{
+	public void drawQueue() {
 		int[] xCoords = new int[myPQ.size() + 1];
 		int[] yCoords = new int[myPQ.size() + 1];
 
@@ -282,7 +285,7 @@ public class ViewWindow extends JFrame
 		g = canvas.getBufferStrategy().getDrawGraphics();
 		int layerHeight = 700 / (logBase2(myPQ.size() - 1) + 1);
 		g.clearRect(0, 0, width, height);
-		
+
 		// draw
 
 		g.setColor(Color.WHITE);
@@ -290,8 +293,7 @@ public class ViewWindow extends JFrame
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Arial", 1, 13));
 
-		for (int i = 1; i < myPQ.size(); i++)
-		{
+		for (int i = 1; i < myPQ.size(); i++) {
 			Item item = (Item) myPQ.getArrayList().get(i);
 			xCoords[i] = (int) (700 / (1 + Math.pow(2, logBase2(i))) * (i + 1 - Math.pow(2, logBase2(i))));
 			yCoords[i] = 100 + layerHeight * logBase2(i);
@@ -301,40 +303,33 @@ public class ViewWindow extends JFrame
 					(int) (700 / (1 + Math.pow(2, logBase2(i))) * (i + 1 - Math.pow(2, logBase2(i)))),
 					100 + layerHeight * logBase2(i));
 		}
-		for (int i = myPQ.size() - 1; i > 1; i--)
-		{
+		for (int i = myPQ.size() - 1; i > 1; i--) {
 			((Graphics2D) g).setStroke(new BasicStroke(5));
 			g.drawLine(xCoords[i] + 20, yCoords[i] - 15, xCoords[i / 2] + 20, yCoords[i / 2] + 15);
 		}
 		// stop drawing
-		
+
 		lblVarIsEmpty.setText(myPQ.isEmpty() + "");
 		lblVarIsEmpty.repaint();
-		
+
 		canvas.getBufferStrategy().show();
 		g.dispose();
 	}
 
-	private int logBase2(int num)
-	{
+	private int logBase2(int num) {
 		return (int) (Math.log(num) / Math.log(2));
 	}
 
-	private boolean validNum(String potential)
-	{
+	private boolean validNum(String potential) {
 
-		for (int i = 0; i < potential.length(); i++)
-		{
+		for (int i = 0; i < potential.length(); i++) {
 			boolean isNum = false;
-			for (int k = 0; k < 10; k++)
-			{
-				if (potential.substring(i, i + 1).equalsIgnoreCase(Integer.toString(k)))
-				{
+			for (int k = 0; k < 10; k++) {
+				if (potential.substring(i, i + 1).equalsIgnoreCase(Integer.toString(k))) {
 					isNum = true;
 				}
 			}
-			if (!isNum)
-			{
+			if (!isNum) {
 				return false;
 			}
 		}
