@@ -1,6 +1,6 @@
 # Priority Queue GUI
 
-This is a Java based GUI application that visually shows a binary heap/priority queue with min-heap ordering. The user is able to add numerical ID/Inventory pairs where the priority queue is based on the item ID. The application is to demonstrate proper functionality of a Priority Queue class written using an ArrayList class written from scratch. The user is able to load item ID/Inventory pairs from file20.txt for demonstration purposes. This application may be useful for demonstrating the process of adding and removing from a binary heap.
+This is a Java desktop application developed for a high school teacher to show a binary heap priority queue. The user is able to add numerical ID/Inventory pairs where the priority queue is based on the item ID. This application can be used as a tool to demonstrate adding and removing from a binary heap implementation of a priority queue. The application also demonstrates proper functionality of a Priority Queue class written using an ArrayList class written from scratch. The user is able to quickly load item ID/Inventory pairs from file20.txt for demonstration purposes.
 
 ## Getting Started
 
